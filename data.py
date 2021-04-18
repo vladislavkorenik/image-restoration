@@ -89,7 +89,7 @@ class NoisyDataset(Dataset):
         w, h = image.size
         c = len(image.getbands())
 
-        serif = 'arial.ttf'
+        serif = 'font/arial.ttf'
 
         text_img = image.copy()
         text_draw = ImageDraw.Draw(text_img)
