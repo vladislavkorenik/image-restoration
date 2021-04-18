@@ -2,15 +2,18 @@ import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as tvF
 from torch.utils.data import Dataset, DataLoader
-import numpy as np
-from PIL import Image, ImageFont, ImageDraw
-from sys import platform
-from random import choice
-from string import ascii_letters
+
 import os
-import scipy
-import random
 import cv2
+import scipy
+import numpy as np
+from sys import platform
+from string import ascii_letters
+from PIL import Image, ImageFont, ImageDraw
+
+import random
+from random import choice
+
 
 class NoisyDataset(Dataset):
     
@@ -103,7 +106,7 @@ class NoisyDataset(Dataset):
             return np.sum(y) / y.size
 
         while 1:
-            font = ImageFont.load_default(serif, np.random.randint(16, 21))
+            font = ImageFont.truetype(serif, np.random.randint(16, 21))
             length = np.random.randint(10, 25)
             chars = ''.join(choice(ascii_letters) for i in range(length))
             color = tuple(np.random.randint(0, 255, c))
