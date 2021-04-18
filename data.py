@@ -89,10 +89,7 @@ class NoisyDataset(Dataset):
         w, h = image.size
         c = len(image.getbands())
 
-        if platform == 'linux':
-            serif = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
-        else:
-            serif = 'Times New Roman.ttf'
+        serif = 'arial.ttf'
 
         text_img = image.copy()
         text_draw = ImageDraw.Draw(text_img)
@@ -106,7 +103,7 @@ class NoisyDataset(Dataset):
             return np.sum(y) / y.size
 
         while 1:
-            font = ImageFont.truetype(serif, np.random.randint(16, 21))
+            font = ImageFont.load_default(serif, np.random.randint(16, 21))
             length = np.random.randint(10, 25)
             chars = ''.join(choice(ascii_letters) for i in range(length))
             color = tuple(np.random.randint(0, 255, c))
