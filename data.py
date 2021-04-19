@@ -100,9 +100,8 @@ class NoisyDataset(Dataset):
             font = ImageFont.truetype(serif, np.random.randint(16, 21))
             length = np.random.randint(10, 25)
             chars = ''.join(choice(ascii_letters) for i in range(length))
-            color = tuple(np.random.randint(0, 255, c))
             pos = (np.random.randint(0, w), np.random.randint(0, h))
-            text_draw.text(pos, chars, color, font=font)
+            text_draw.text(pos, chars, fill=(0, 0, 0, 15), font=font)
 
             # Update mask and check occupancy
             mask_draw.text(pos, chars, 1, font=font)
