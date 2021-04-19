@@ -90,12 +90,6 @@ class NoisyDataset(Dataset):
         mask_img = Image.new('1', (w, h))
         mask_draw = ImageDraw.Draw(mask_img)
 
-        max_occupancy = np.random.uniform(0, self.noise_param)
-
-        def get_occupancy(x):
-            y = np.array(x, np.uint8)
-            return np.sum(y) / y.size
-
         font = ImageFont.truetype(serif, np.random.randint(16, 21))
         length = np.random.randint(10, 25)
         chars = ''.join(choice(ascii_letters) for i in range(length))
