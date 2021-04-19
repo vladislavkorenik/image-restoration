@@ -81,20 +81,19 @@ class NoisyDataset(Dataset):
         assert self.noise_param < 1, 'Text parameter should be probability of occupancy'
 
         w, h = image.size
-        c = len(image.getbands())
 
         serif = 'font/arial.ttf'
 
         text_img = image.copy()
         text_draw = ImageDraw.Draw(text_img)
-        mask_img = Image.new('1', (w, h))
+        mask_img = Image.new('RGBA', (w, h))
         mask_draw = ImageDraw.Draw(mask_img)
 
         font = ImageFont.truetype(serif, np.random.randint(16, 21))
         length = np.random.randint(10, 25)
         chars = ''.join(choice(ascii_letters) for i in range(length))
-        pos = (np.random.randint(0, w), np.random.randint(0, h))
-        text_draw.text(pos, chars, fill=(255, 255, 255, 40), font=font)
+        pos = (np.random.randint(50, w), np.random.randint(50, h))
+        text_draw.text(pos, chars, fill=(255, 255, 255, 20), font=font)
 
         # Update mask and check occupancy
         mask_draw.text(pos, chars, 1, font=font)
