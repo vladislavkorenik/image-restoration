@@ -94,7 +94,7 @@ class NoisyDataset(Dataset):
         length = np.random.randint(10, 25)
         chars = ''.join(choice(ascii_letters) for i in range(length))
         pos = (np.random.randint(0, w), np.random.randint(0, h))
-        text_draw.text(pos, chars, fill=(255, 255, 255, 0.5), font=font)
+        text_draw.text(pos, chars, fill=(255, 255, 255, 40), font=font)
 
         # Update mask and check occupancy
         mask_draw.text(pos, chars, 1, font=font)
