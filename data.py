@@ -51,7 +51,7 @@ class NoisyDataset(Dataset):
     
     def _add_gaussian_noise(self, image):
         """
-        Added only gaussian noise
+        Added gaussian noise
         """
         w, h = image.size
         c = len(image.getbands())
@@ -63,18 +63,9 @@ class NoisyDataset(Dataset):
         noisy_image = np.clip(noisy_image, 0, 255).astype(np.uint8)
         return {'image':Image.fromarray(noisy_image), 'mask': None, 'use_mask': False}
 
-    def _add_poisson_noise(self, image):
-        """
-        Added poisson Noise
-        """
-        noise_mask = np.random.poisson(np.array(image))
-        #print(noise_mask.dtype)
-        #print(noise_mask)
-        return {'image':noise_mask.astype(np.uint8), 'mask': None, 'use_mask': False}
-
     def _add_m_bernoulli_noise(self, image):
         """
-        Multiplicative bernoulli
+        Add bernoulli noise
         """
         sz = np.array(image).shape[0]
         prob_ = random.uniform(0, self.noise_param)
@@ -124,8 +115,6 @@ class NoisyDataset(Dataset):
         
         if self.noise == 'gaussian':
             return self._add_gaussian_noise(image)
-        elif self.noise == 'poisson':
-            return self._add_poisson_noise(image)
         elif self.noise == 'multiplicative_bernoulli':
             return self._add_m_bernoulli_noise(image)
         elif self.noise == 'text':
