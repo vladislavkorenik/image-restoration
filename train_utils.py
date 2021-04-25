@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from data import NoisyDataset
+from noise import NoisyDataset
 import torch.optim as optim
 from torch.optim import lr_scheduler
 from tqdm import tqdm
