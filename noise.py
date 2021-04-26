@@ -74,7 +74,7 @@ class NoisyDataset(Dataset):
         length = np.random.randint(10, 25)
         chars = ''.join(choice(ascii_letters) for i in range(length))
 
-        pos = (np.random.randint(50, self.crop_size), np.random.randint(50, self.crop_size))
+        pos = (np.random.randint(0, self.crop_size), np.random.randint(0, self.crop_size))
                 
         text_draw.text(pos, chars, fill=(255, 255, 255, 20), font=font)
         mask_draw.text(pos, chars, fill=(255, 255, 255, 20), font=font)
