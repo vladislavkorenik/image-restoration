@@ -25,47 +25,46 @@ class NoisyDataset(Dataset):
     
     def _random_crop_to_size(self, imgs):
         
-        w, h = imgs[0].size
-        assert w >= self.crop_size and h >= self.crop_size, 'Cannot be croppped. Invalid size'
+        width, height = imgs[0].size
+        assert width >= self.crop_size and height >= self.crop_size, 'Cannot be croppped. Invalid size'
 
         cropped_imgs = []
-        i = np.random.randint(0, h - self.crop_size + 2)
-        j = np.random.randint(0, w - self.crop_size + 2)
+        i = np.random.randint(0, height - self.crop_size + 2)
+        j = np.random.randint(0, width - self.crop_size + 2)
 
         for img in imgs:
-            if min(w, h) < self.crop_size:
+            if min(width, height) < self.crop_size:
                 img = tvF.resize(img, (self.crop_size, self.crop_size))
             cropped_imgs.append(tvF.crop(img, i, j, self.crop_size, self.crop_size))
         
         return cropped_imgs
     
     def _add_gaussian_noise(self, image):
-        w, h = image.size
+        width, height = image.size
         c = len(image.getbands())
         
         std = np.random.uniform(0, self.noise_param)
-        _n = np.random.normal(0, std, (h, w, c))
-        noisy_image = np.array(image) + _n
+        _noise = np.random.normal(0, std, (height, width, c))
+        noisy_image = np.array(image) + _noise
         
         noisy_image = np.clip(noisy_image, 0, 255).astype(np.uint8)
         return {'image':Image.fromarray(noisy_image), 'mask': None, 'use_mask': False}
 
-    def _add_m_bernoulli_noise(self, image):
-        sz = np.array(image).shape[0]
+    def _add_bernoulli_noise(self, image):
+        size = np.array(image).shape[0]
         prob_ = random.uniform(0, self.noise_param)
-        mask = np.random.choice([0, 1], size=(sz, sz), p=[prob_, 1 - prob_])
+        mask = np.random.choice([0, 1], size=(size, size), p=[prob_, 1 - prob_])
         mask = np.repeat(mask[:, :, np.newaxis], 3, axis=2)
         return {'image':np.multiply(image, mask).astype(np.uint8), 'mask':mask.astype(np.uint8), 'use_mask': True}
 
 
     def _add_text_overlay(self, image):
-        assert self.noise_param < 1, 'Text parameter should be probability of occupancy'
 
         text_img = image.copy()
         text_draw = ImageDraw.Draw(text_img)
 
-        w, h = image.size
-        mask_img = Image.new('RGBA', (w, h))
+        width, height = image.size
+        mask_img = Image.new('RGBA', (width, height))
         mask_draw = ImageDraw.Draw(mask_img)
 
         serif = 'font/arial.ttf'
@@ -76,8 +75,8 @@ class NoisyDataset(Dataset):
 
         pos = (np.random.randint(0, self.crop_size), np.random.randint(0, self.crop_size))
                 
-        text_draw.text(pos, chars, fill=(255, 255, 255, 20), font=font)
-        mask_draw.text(pos, chars, fill=(255, 255, 255, 20), font=font)
+        text_draw.text(pos, chars, font=font, fill=(255, 255, 255, 20))
+        mask_draw.text(pos, chars, font=font, fill=(255, 255, 255, 20))
         
         return {'image':text_img, 'mask':None, 'use_mask': False}
 
@@ -86,7 +85,7 @@ class NoisyDataset(Dataset):
         if self.noise == 'gaussian':
             return self._add_gaussian_noise(image)
         elif self.noise == 'multiplicative_bernoulli':
-            return self._add_m_bernoulli_noise(image)
+            return self._add_bernoulli_noise(image)
         elif self.noise == 'text':
             return self._add_text_overlay(image)
         else:
