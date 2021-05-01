@@ -11,7 +11,7 @@ class ConvBlock(nn.Module):
         self.use_activation = use_activation
         self.conv = nn.Conv2d(input_channels, output_channels, kernel_size, stride=1, padding=1)
         self.bn = nn.BatchNorm2d(output_channels)
-        self.activation = nn.LeakyReLU(0.2, inplace=True)
+        self.activation = nn.LeakyReLU(0.01, inplace=True)
 
     def forward(self, x):
         pred = self.bn(self.conv(x))
@@ -35,7 +35,7 @@ class NetModel(nn.Module):
         super(NetModel, self).__init__()
 
         self.conv1 = nn.Conv2d(input_channels, output_channels, kernel_size=3, stride=1, padding=1)
-        self.activation = nn.LeakyReLU(0.2, inplace=True)
+        self.activation = nn.LeakyReLU(0.01, inplace=True)
 
         _result = [ResultBlock(output_channels, output_channels, 3) for i in range(result_layers)]
         self.result = nn.Sequential(*_result)
