@@ -31,7 +31,7 @@ class ResidualBlock(nn.Module):
 
 class NetModel(nn.Module):
 
-    def __init__(self, input_channels, output_channels, residual_layers=8):
+    def __init__(self, input_channels, output_channels, residual_layers=16):
         super(NetModel, self).__init__()
 
         self.conv1 = nn.Conv2d(input_channels, output_channels, kernel_size=3, stride=1, padding=1)
