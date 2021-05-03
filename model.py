@@ -18,10 +18,10 @@ class ConvBlock(nn.Module):
         return self.activation(pred) if self.use_activation else pred
 
 
-class ResultBlock(nn.Module):
+class ResidualBlock(nn.Module):
     
     def __init__(self, input_channels, output_channels, kernel_size):
-        super(ResultBlock, self).__init__()
+        super(ResidualBlock, self).__init__()
         self.block1 = ConvBlock(input_channels, output_channels, kernel_size)
         self.block2 = ConvBlock(input_channels, output_channels, kernel_size, use_activation=False)
 
@@ -31,20 +31,20 @@ class ResultBlock(nn.Module):
 
 class NetModel(nn.Module):
 
-    def __init__(self, input_channels, output_channels, result_layers=16):
+    def __init__(self, input_channels, output_channels, residual_layers=8):
         super(NetModel, self).__init__()
 
         self.conv1 = nn.Conv2d(input_channels, output_channels, kernel_size=3, stride=1, padding=1)
         self.activation = nn.LeakyReLU(0.01, inplace=True)
 
-        _result = [ResultBlock(output_channels, output_channels, 3) for i in range(result_layers)]
-        self.result = nn.Sequential(*_result)
+        _residual = [ResidualBlock(output_channels, output_channels, 3) for i in range(residual_layers)]
+        self.residual = nn.Sequential(*_residual)
 
         self.conv2 = ConvBlock(output_channels, output_channels, 3, use_activation=False)
         self.conv3 = nn.Conv2d(output_channels, input_channels, kernel_size=3, stride=1, padding=1)
     
     def forward(self, input):
         pred1 = self.activation(self.conv1(input))
-        pred2 = self.conv2(self.result(pred1))
+        pred2 = self.conv2(self.residual(pred1))
         pred = self.conv3(torch.add(pred1, pred2))
         return pred
