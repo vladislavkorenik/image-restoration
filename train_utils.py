@@ -18,7 +18,7 @@ class Train:
             self.architecture = architecture.cuda()
         else:
             self.architecture = architecture
-            
+
         self.train_dir = train_dir
         self.valid_dir = valid_dir
         self.noise_model = params['noise_model']
@@ -26,7 +26,7 @@ class Train:
         self.clean_targs = params['clean_targs']
         self.lr = params['lr']
         self.epochs = params['epochs']
-        self.bs = params['bs']
+        self.batch_size = params['bs']
         
 
         self.loaded_train, self.loaded_valid = self.__getdataset__()
@@ -47,15 +47,15 @@ class Train:
                 else:
                     source = _list[0]
                     target = _list[-1]
-                _op = self.architecture(Variable(source))
+                _pred = self.architecture(Variable(source))
                 if len(_list) == 4:
                     if self.cuda:
                         mask = Variable(_list[1].cuda())
                     else:
                         mask = Variable(_list[1])
-                    _loss = self.loss_fn(mask * _op, mask * Variable(target))
+                    _loss = self.loss_fn(mask * _pred, mask * Variable(target))
                 else:
-                    _loss = self.loss_fn(_op, Variable(target))
+                    _loss = self.loss_fn(_pred, Variable(target))
                 tr_loss += _loss.data
 
                 self.optimizer.zero_grad()
@@ -79,15 +79,15 @@ class Train:
             else:
                 source = _list[0]
                 target = _list[-1]
-            _op = self.architecture(Variable(source))
+            _pred = self.architecture(Variable(source))
             if len(_list) == 4:
                 if self.cuda:
                     mask = Variable(_list[1].cuda())
                 else:
                     mask = Variable(_list[1])
-                _loss = self.loss_fn(mask * _op, mask * Variable(target))
+                _loss = self.loss_fn(mask * _pred, mask * Variable(target))
             else:
-                _loss = self.loss_fn(_op, Variable(target))
+                _loss = self.loss_fn(_pred, Variable(target))
             val_loss += _loss.data
         
         return val_loss
@@ -97,11 +97,11 @@ class Train:
         
         train_data = NoisyDataset(self.train_dir, crop_size=self.crop_size, train_noise_model=self.noise_model,
                                         clean_targ=self.clean_targs)
-        loaded_train = DataLoader(train_data, batch_size=self.bs, shuffle=True)
+        loaded_train = DataLoader(train_data, batch_size=self.batch_size, shuffle=True)
 
         valid_data = NoisyDataset(self.valid_dir, crop_size=self.crop_size, train_noise_model=self.noise_model,
                                         clean_targ=True)
-        loaded_valid = DataLoader(valid_data, batch_size=self.bs)
+        loaded_valid = DataLoader(valid_data, batch_size=self.batch_size)
 
         return loaded_train, loaded_valid
 
